@@ -1,8 +1,8 @@
-import config from "config/config";
-import { UnauthorizedError } from "errors/errors";
-import { NextFunction, Request, Response } from "express";
-import { JwtPayload, verify } from "jsonwebtoken";
-import { AuthService } from "modules/auth/auth.service";
+import config from 'config/config';
+import { UnauthorizedError } from 'errors/errors';
+import { NextFunction, Request, Response } from 'express';
+import { JwtPayload, verify } from 'jsonwebtoken';
+import { AuthService } from 'modules/auth/auth.service';
 
 export type ExtendedRequest = Request & {
   user: any;
@@ -12,14 +12,14 @@ export const authMiddleware = async (req: ExtendedRequest, _: Response, next: Ne
   const authService = new AuthService();
 
   if (!req.headers.authorization) {
-    throw new UnauthorizedError();
+    return next(new UnauthorizedError());
   }
 
-  const token = req.headers.authorization.split(" ")[1];
+  const token = req.headers.authorization!.split(' ')[1];
   const verifiedToken = await verifyAsync(token);
 
   if (!verifiedToken) {
-    throw new UnauthorizedError();
+    return next(new UnauthorizedError());
   }
 
   const existingToken = await authService.getAccessToken(token);

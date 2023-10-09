@@ -1,5 +1,6 @@
-import { RequestHandler, Router } from "express";
-import { UsersController } from "modules/users/users.controller";
+import { RequestHandler, Router } from 'express';
+import { validateUserDto } from 'middlewares/validation.middleware';
+import { UsersController } from 'modules/users/users.controller';
 
 const router = Router();
 const usersController = new UsersController();
@@ -27,6 +28,6 @@ const usersController = new UsersController();
  *      400:
  *        description: Bad request
  */
-router.post("/", usersController.create.bind(usersController) as RequestHandler);
+router.post('/', validateUserDto, usersController.create.bind(usersController) as RequestHandler);
 
 export default router;

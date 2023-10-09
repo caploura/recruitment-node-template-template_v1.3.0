@@ -1,4 +1,5 @@
 import config from 'config/config';
+import { faker } from '@faker-js/faker';
 import { fromUnixTime } from 'date-fns';
 import { UnauthorizedError } from 'errors/errors';
 import { Express, Response } from 'express';
@@ -7,6 +8,7 @@ import http from 'http';
 import { decode, sign } from 'jsonwebtoken';
 import { ExtendedRequest, authMiddleware } from 'middlewares/auth.middleware';
 import { AccessToken } from 'modules/auth/entities/access-token.entity';
+import { CreateUserDto } from 'modules/users/dto/create-user.dto';
 import { User } from 'modules/users/entities/user.entity';
 import { UsersService } from 'modules/users/users.service';
 import ds from 'orm/orm.config';
@@ -21,6 +23,13 @@ describe('AuthMiddleware', () => {
 
   let usersService: UsersService;
   let accessTokenRepository: Repository<AccessToken>;
+
+  const createUserDto: CreateUserDto = {
+    email: faker.internet.exampleEmail(),
+    password: faker.string.alpha(10),
+    address: faker.location.streetAddress(),
+    coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
+  };
 
   const signAsync = async (user: User) => {
     const token = sign(
@@ -59,7 +68,7 @@ describe('AuthMiddleware', () => {
   });
 
   it('should validate existing token with given token', async () => {
-    const user = await usersService.createUser({ email: 'user@test.com', password: 'pwd' });
+    const user = await usersService.createUser(createUserDto);
     const { token } = await signAsync(user);
 
     const req = { headers: { authorization: `Bearer ${token}` } } as ExtendedRequest;

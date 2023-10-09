@@ -11,6 +11,12 @@ export class User {
   @Column()
   public hashedPassword: string;
 
+  @Column()
+  public coordinates: string;
+
+  @Column()
+  public address: string;
+
   @CreateDateColumn()
   public createdAt: Date;
 

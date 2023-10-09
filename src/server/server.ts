@@ -1,7 +1,7 @@
-import swaggerDocs from "config/swagger-config";
-import express, { Express } from "express";
-import { handleErrorMiddleware } from "middlewares/error-handler.middleware";
-import routes from "routes";
+import swaggerDocs from 'config/swagger-config';
+import express, { Express } from 'express';
+import { handleErrorMiddleware } from 'middlewares/error-handler.middleware';
+import routes from 'routes';
 
 export function setupServer(): Express {
   const app = express();
@@ -9,7 +9,7 @@ export function setupServer(): Express {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use("/api", routes);
+  app.use('/api', routes);
 
   app.use(handleErrorMiddleware);
 

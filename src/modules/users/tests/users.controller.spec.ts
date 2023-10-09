@@ -1,14 +1,15 @@
-import config from "config/config";
-import { Express } from "express";
-import { setupServer } from "server/server";
-import { clearDatabase, disconnectAndClearDatabase } from "helpers/utils";
-import http, { Server } from "http";
-import ds from "orm/orm.config";
-import supertest, { SuperAgentTest } from "supertest";
-import { CreateUserDto } from "../dto/create-user.dto";
-import { UsersService } from "../users.service";
+import config from 'config/config';
+import { faker } from '@faker-js/faker';
+import { Express } from 'express';
+import { setupServer } from 'server/server';
+import { clearDatabase, disconnectAndClearDatabase } from 'helpers/utils';
+import http, { Server } from 'http';
+import ds from 'orm/orm.config';
+import supertest, { SuperAgentTest } from 'supertest';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UsersService } from '../users.service';
 
-describe("UsersController", () => {
+describe('UsersController', () => {
   let app: Express;
   let agent: SuperAgentTest;
   let server: Server;
@@ -34,11 +35,16 @@ describe("UsersController", () => {
     usersService = new UsersService();
   });
 
-  describe("POST /users", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password" };
+  describe('POST /users', () => {
+    const createUserDto: CreateUserDto = {
+      email: faker.internet.exampleEmail(),
+      password: faker.string.alpha(10),
+      address: faker.location.streetAddress(),
+      coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
+    };
 
-    it("should create new user", async () => {
-      const res = await agent.post("/api/users").send(createUserDto);
+    it('should create new user', async () => {
+      const res = await agent.post('/api/users').send(createUserDto);
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toMatchObject({
@@ -49,15 +55,15 @@ describe("UsersController", () => {
       });
     });
 
-    it("should throw UnprocessableEntityError if user already exists", async () => {
+    it('should throw UnprocessableEntityError if user already exists', async () => {
       await usersService.createUser(createUserDto);
 
-      const res = await agent.post("/api/users").send(createUserDto);
+      const res = await agent.post('/api/users').send(createUserDto);
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toMatchObject({
-        name: "UnprocessableEntityError",
-        message: "A user for the email already exists",
+        name: 'UnprocessableEntityError',
+        message: 'A user for the email already exists',
       });
     });
   });

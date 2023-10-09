@@ -1,4 +1,5 @@
 import config from "config/config";
+import { faker } from '@faker-js/faker';
 import { UnprocessableEntityError } from "errors/errors";
 import { Express } from "express";
 import { setupServer } from "server/server";
@@ -33,7 +34,12 @@ describe("UsersController", () => {
   });
 
   describe(".createUser", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password" };
+    const createUserDto: CreateUserDto = {
+      email: faker.internet.exampleEmail(),
+      password: faker.string.alpha(10),
+      address: faker.location.streetAddress(),
+      coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
+    };
 
     it("should create new user", async () => {
       const createdUser = await usersService.createUser(createUserDto);
@@ -55,7 +61,12 @@ describe("UsersController", () => {
   });
 
   describe(".findOneBy", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password" };
+    const createUserDto: CreateUserDto = {
+      email: faker.internet.exampleEmail(),
+      password: faker.string.alpha(10),
+      address: faker.location.streetAddress(),
+      coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
+    };
 
     it("should get user by provided param", async () => {
       const user = await usersService.createUser(createUserDto);

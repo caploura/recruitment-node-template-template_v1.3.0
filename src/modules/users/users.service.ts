@@ -1,10 +1,10 @@
-import * as bcrypt from "bcrypt";
-import config from "config/config";
-import { UnprocessableEntityError } from "errors/errors";
-import { DeepPartial, FindOptionsWhere, Repository } from "typeorm";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { User } from "./entities/user.entity";
-import dataSource from "orm/orm.config";
+import * as bcrypt from 'bcrypt';
+import config from 'config/config';
+import { UnprocessableEntityError } from 'errors/errors';
+import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import dataSource from 'orm/orm.config';
 
 export class UsersService {
   private readonly usersRepository: Repository<User>;
@@ -14,16 +14,17 @@ export class UsersService {
   }
 
   public async createUser(data: CreateUserDto): Promise<User> {
-    const { email, password } = data;
+    const { email, password, coordinates, address } = data;
 
     const existingUser = await this.findOneBy({ email: email });
-    if (existingUser) throw new UnprocessableEntityError("A user for the email already exists");
+    if (existingUser) throw new UnprocessableEntityError('A user for the email already exists');
 
     const hashedPassword = await this.hashPassword(password);
 
-    const userData: DeepPartial<User> = { email, hashedPassword };
+    const userData: DeepPartial<User> = { email, hashedPassword, coordinates, address };
 
     const newUser = this.usersRepository.create(userData);
+
     return this.usersRepository.save(newUser);
   }
 
