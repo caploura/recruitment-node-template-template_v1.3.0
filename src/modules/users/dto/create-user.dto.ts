@@ -23,7 +23,7 @@ import { IsEmail, IsLatLong, IsNotEmpty, IsString } from 'class-validator';
  *          default: 52.355822,4.911021
  *        address:
  *          type: string
- *          default: Wibautstraat, 1091 GN Amsterdam, Netherlands
+ *          default: Some street name, 0000 Somewhere
  */
 
 export class CreateUserDto {

@@ -4,7 +4,7 @@ import { IsLatLong, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validat
  * @openapi
  * components:
  *  schemas:
- *    CreateFarmDtio:
+ *    CreateFarmDto:
  *      type: object
  *      required:
  *        - name
@@ -22,7 +22,7 @@ import { IsLatLong, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validat
  *          default: 52.355822,4.911021
  *        address:
  *          type: string
- *          default: Wibautstraat, 1091 GN Amsterdam, Netherlands
+ *          default: Some street name, 0000 Somewhere
  *        userId:
  *          type: string
  *          default: 28221216-5983-454f-85e2-e1a4669e50ab
