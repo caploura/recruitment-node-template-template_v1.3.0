@@ -1,5 +1,6 @@
-import { RequestHandler, Router } from "express";
-import { AuthController } from "modules/auth/auth.controller";
+import { RequestHandler, Router } from 'express';
+import { validateAuthLoginDto } from 'middlewares/auth-validation.middleware';
+import { AuthController } from 'modules/auth/auth.controller';
 
 const router = Router();
 const authController = new AuthController();
@@ -29,6 +30,6 @@ const authController = new AuthController();
  *      422:
  *        description: Unprocessable Entity
  */
-router.post("/login", authController.login.bind(authController) as RequestHandler);
+router.post('/login', validateAuthLoginDto, authController.login.bind(authController) as RequestHandler);
 
 export default router;

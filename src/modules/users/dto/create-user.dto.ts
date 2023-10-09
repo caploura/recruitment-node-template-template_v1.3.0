@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsLatLong, IsNotEmpty, IsString } from 'class-validator';
 
 /**
  * @openapi
@@ -9,6 +9,8 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
  *      required:
  *        - email
  *        - password
+ *        - coordinates
+ *        - address
  *      properties:
  *        email:
  *          type: string
@@ -33,7 +35,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   public password: string;
 
-  @IsString()
+  @IsLatLong()
   @IsNotEmpty()
   public coordinates: string;
 

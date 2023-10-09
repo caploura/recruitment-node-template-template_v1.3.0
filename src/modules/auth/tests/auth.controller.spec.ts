@@ -62,7 +62,7 @@ describe('AuthController', () => {
     });
 
     it('should throw UnprocessableEntityError when user logs in with invalid email', async () => {
-      const res = await agent.post('/api/auth/login').send({ email: 'invalidEmail', password: 'pwd' });
+      const res = await agent.post('/api/auth/login').send({ email: 'invalidEmail@app.com', password: 'pwd' });
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toMatchObject({
