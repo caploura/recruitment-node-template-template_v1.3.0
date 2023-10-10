@@ -16,15 +16,25 @@ export const authMiddleware = async (req: ExtendedRequest, _: Response, next: Ne
   }
 
   const token = req.headers.authorization!.split(' ')[1];
-  const verifiedToken = await verifyAsync(token);
+  let verifiedToken;
+
+  try {
+    verifiedToken = await verifyAsync(token);
+  } catch (error) {
+    next(error);
+  }
 
   if (!verifiedToken) {
     return next(new UnauthorizedError());
   }
 
-  const existingToken = await authService.getAccessToken(token);
-
-  req.user = existingToken.user;
+  let existingToken;
+  try {
+    existingToken = await authService.getAccessToken(token);
+    req.user = existingToken.user;
+  } catch (error) {
+    return next(error);
+  }
 
   next();
 };

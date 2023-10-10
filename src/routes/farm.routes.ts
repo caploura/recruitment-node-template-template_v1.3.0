@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express';
+import { authMiddleware } from 'middlewares/auth.middleware';
 import { validateCreateFarmDto, validateFetchFarms } from 'middlewares/farm-validation.middleware';
 import { FarmsController } from 'modules/farms/farms.controller';
 
@@ -41,7 +42,7 @@ const farmsController = new FarmsController();
  *      401:
  *        description: Unauthorized
  */
-router.post('/', validateCreateFarmDto, farmsController.create.bind(farmsController) as RequestHandler);
-router.get('/', validateFetchFarms, farmsController.fetch.bind(farmsController) as RequestHandler);
+router.post('/', authMiddleware, validateCreateFarmDto, farmsController.create.bind(farmsController) as RequestHandler);
+router.get('/', authMiddleware, validateFetchFarms, farmsController.fetch.bind(farmsController) as RequestHandler);
 
 export default router;

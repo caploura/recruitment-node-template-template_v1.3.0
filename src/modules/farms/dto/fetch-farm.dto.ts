@@ -20,7 +20,7 @@ import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
  *          type: number
  *          default: password
  */
-export class FetchClassQueryParams {
+export class FetchFarmQueryParams {
   @IsOptional()
   @Min(0)
   @Max(100)
@@ -45,4 +45,15 @@ export class FetchClassQueryParams {
   @IsOptional()
   @IsBooleanString()
   outliers: string = 'false';
+}
+
+export class FetchFarmResponseDto {
+  name: string;
+  address: string;
+  coordinates: string;
+  size: number;
+  yield: number;
+  owner?: string;
+  createdAt: Date;
+  distance: number;
 }

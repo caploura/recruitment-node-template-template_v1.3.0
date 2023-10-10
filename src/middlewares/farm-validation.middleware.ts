@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import { BadRequestError } from 'errors/errors';
 import { NextFunction, Request, Response } from 'express';
 import { CreateFarmDto } from 'modules/farms/dto/create-farm.dto';
-import { FetchClassQueryParams } from 'modules/farms/dto/fetch-farm.dto';
+import { FetchFarmQueryParams } from 'modules/farms/dto/fetch-farm.dto';
 
 export const validateCreateFarmDto = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
   const instance = plainToInstance(CreateFarmDto, req.body);
@@ -18,7 +18,7 @@ export const validateCreateFarmDto = async (req: Request, _: Response, next: Nex
 };
 
 export const validateFetchFarms = async (req: Request, _: Response, next: NextFunction): Promise<void> => {
-  const instance = plainToInstance(FetchClassQueryParams, req.query, {
+  const instance = plainToInstance(FetchFarmQueryParams, req.query, {
     enableImplicitConversion: true,
     exposeDefaultValues: true,
   });

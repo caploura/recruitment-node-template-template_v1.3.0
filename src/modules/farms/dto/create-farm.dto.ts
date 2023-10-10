@@ -1,4 +1,4 @@
-import { IsLatLong, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsLatLong, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 /**
  * @openapi
@@ -47,15 +47,11 @@ export class CreateFarmDto {
   @IsNotEmpty()
   public address: string;
 
-  @IsUUID(4)
+  @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
-  public userId: string;
+  public size: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
-  size: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsNotEmpty()
-  yield: number;
+  public yield: number;
 }
