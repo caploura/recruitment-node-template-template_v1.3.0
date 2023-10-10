@@ -7,14 +7,19 @@ import { EntityNotFoundError } from 'typeorm';
 import { User } from 'modules/users/entities/user.entity';
 import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
 import { DefaultPaginationValues } from 'constants/pagination.constants';
+import { DistanceService } from 'modules/distance/distance.service';
+import { DistanceUnitsEnum } from 'enums/distance.enum';
+import { Farm } from './entities/farm.entity';
 
 export class FarmsController {
   private readonly farmService: FarmsService;
   private readonly userService: UsersService;
+  private readonly distanceService: DistanceService;
 
   constructor() {
     this.userService = new UsersService();
     this.farmService = new FarmsService();
+    this.distanceService = new DistanceService();
   }
 
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -67,14 +72,37 @@ export class FarmsController {
       }
 
       const farms = await this.farmService.fetchFarms(
-        parseInt(limit as string),
-        parseInt(offset as string),
+        limit as number,
+        offset as number,
         sortOrder as SortOrderEnum,
         sortColumn as SortColumnEnum,
         outliersVal,
         averageYield,
       );
-      res.status(200).send(farms);
+
+      type ResultType = Farm & { distance: number };
+
+      let result: ResultType[] = [];
+      if (farms.length > 0) {
+        const distance = await this.distanceService.getDistanceBetweenTwoPointsFromGoogleApi({
+          origins: [user.coordinates],
+          destinations: farms.map(f => f.coordinates),
+          units: DistanceUnitsEnum.metric,
+        });
+
+        result = farms.map((f, i) => {
+          return { ...f, distance: distance.rows[0].elements[i].distance.value };
+        });
+
+        if (sortColumn === SortColumnEnum.DISTANCE) {
+          result = result.sort((a, b) => {
+            if (sortOrder === SortOrderEnum.ASC) return b.distance - a.distance;
+            return a.distance - b.distance;
+          });
+        }
+      }
+
+      res.status(200).send(result);
     } catch (error) {
       next(error);
     }

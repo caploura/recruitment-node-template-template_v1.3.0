@@ -44,4 +44,12 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   public JWT_EXPIRES_AT: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  public GOOGLE_API_URL: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  public GOOGLE_API_KEY: string;
 }

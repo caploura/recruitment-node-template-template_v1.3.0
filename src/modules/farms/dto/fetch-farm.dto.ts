@@ -1,4 +1,5 @@
-import { IsBooleanString, IsEnum, IsNotEmpty, IsNumberString, IsOptional, ValidateIf } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBooleanString, IsEnum, IsNotEmpty, IsNumber, IsOptional, Max, Min } from 'class-validator';
 import { DefaultPaginationValues } from 'constants/pagination.constants';
 import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
 
@@ -21,23 +22,27 @@ import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
  */
 export class FetchClassQueryParams {
   @IsOptional()
-  @IsNumberString()
-  limit: string = DefaultPaginationValues.limit;
+  @Min(0)
+  @Max(100)
+  @Type(() => Number)
+  @IsNumber()
+  limit: number = DefaultPaginationValues.limit;
 
-  @ValidateIf((data) => data.offset)
   @IsOptional()
-  @IsNumberString()
-  offset: string = DefaultPaginationValues.offset;
+  @Min(0)
+  @Type(() => Number)
+  @IsNumber()
+  offset: number = DefaultPaginationValues.offset;
 
   @IsEnum(SortOrderEnum)
   @IsNotEmpty()
   sortOrder: string;
-  
+
   @IsEnum(SortColumnEnum)
   @IsNotEmpty()
   sortColumn: string;
 
   @IsOptional()
   @IsBooleanString()
-  outliers: string = 'false'
+  outliers: string = 'false';
 }

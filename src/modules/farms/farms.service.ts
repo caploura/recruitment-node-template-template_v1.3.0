@@ -33,7 +33,7 @@ export class FarmsService {
 
     let query = this.farmsRepository
       .createQueryBuilder('farm')
-      .select('farm.name, farm.address, farm.size, farm.yield, user.email AS owner, farm.createdAt');
+      .select('farm.name, farm.address, farm.coordinates, farm.size, farm.yield, user.email AS owner, farm.createdAt');
 
     if (outliers) {
       query = query.where('farm.yield > :minYield AND farm.yield < :maxYield', {
