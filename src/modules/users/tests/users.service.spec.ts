@@ -10,7 +10,7 @@ import { CreateUserDto } from "../dto/create-user.dto";
 import { User } from "../entities/user.entity";
 import { UsersService } from "../users.service";
 
-describe("UsersController", () => {
+describe("UsersService", () => {
   let app: Express;
   let server: Server;
 
