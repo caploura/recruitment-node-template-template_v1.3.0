@@ -101,8 +101,8 @@ export class FarmsService {
 
       if (sortColumn === SortColumnEnum.DISTANCE) {
         result = result.sort((a, b) => {
-          if (sortOrder === SortOrderEnum.ASC) return b.distance - a.distance;
-          return a.distance - b.distance;
+          if (sortOrder === SortOrderEnum.ASC) return a.distance - b.distance;
+          return b.distance - a.distance;
         });
       }
     }

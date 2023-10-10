@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { CreateFarmDto } from 'modules/farms/dto/create-farm.dto';
 import { CreateUserDto } from 'modules/users/dto/create-user.dto';
 import { UsersService } from 'modules/users/users.service';
-import { ExtendedFarm, FarmsService } from 'modules/farms/farms.service';
+import { FarmsService } from 'modules/farms/farms.service';
 import { AuthService } from 'modules/auth/auth.service';
 import { AccessToken } from 'modules/auth/entities/access-token.entity';
 
@@ -18,7 +18,9 @@ export const clearDatabase = async (ds: DataSource): Promise<void> => {
   await Promise.all(entityMetadatas.map(data => ds.query(`truncate table "${data.tableName}" cascade`)));
 };
 
-export const dbSeed = async (usersService: UsersService, farmsService: FarmsService, authService: AuthService): Promise<string> => {
+export const AMOUNT_OF_TEST_FARMS: number = 150;
+
+export const dbSeed = async (usersService: UsersService, farmsService: FarmsService, authService: AuthService): Promise<any> => {
   const email = faker.internet.exampleEmail();
   const pwd = faker.string.alpha(10);
 
@@ -29,22 +31,21 @@ export const dbSeed = async (usersService: UsersService, farmsService: FarmsServ
     coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
   };
 
-  const { id: userId } = await usersService.createUser(user);
+  const createdUser = await usersService.createUser(user);
 
-  console.log(`Created test user with id ${userId}`);
+  console.log(`Created test user with id ${createdUser.id}`);
 
   const farms: CreateFarmDto[] = [];
-  for (let i = 0; i < 150; i++) {
-    const f: ExtendedFarm = {
+  for (let i = 0; i < AMOUNT_OF_TEST_FARMS; i++) {
+    const f = {
       name: faker.word.words(3),
       coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
       address: faker.location.streetAddress(),
-      userId,
       size: parseFloat(faker.number.float({ min: 20, max: 100 }).toFixed(2)),
       yield: parseFloat(faker.number.float({ min: 20, max: 100 }).toFixed(2)),
     };
 
-    farms.push(f);
+    farms.push({ ...f, user: createdUser } as CreateFarmDto);
   }
 
   try {
@@ -62,5 +63,5 @@ export const dbSeed = async (usersService: UsersService, farmsService: FarmsServ
 
   console.log(`Finished seeding test db`);
 
-  return token.token;
+  return { userId: createdUser.id, token: token.token };
 };

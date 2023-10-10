@@ -36,11 +36,11 @@ export class FetchFarmQueryParams {
 
   @IsEnum(SortOrderEnum)
   @IsNotEmpty()
-  sortOrder: string;
+  sortOrder: string = SortOrderEnum.DESC;
 
   @IsEnum(SortColumnEnum)
   @IsNotEmpty()
-  sortColumn: string;
+  sortColumn: string = SortColumnEnum.NAME;
 
   @IsOptional()
   @IsBooleanString()
