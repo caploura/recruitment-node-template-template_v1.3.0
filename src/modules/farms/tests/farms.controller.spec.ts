@@ -84,6 +84,83 @@ describe('FarmsController', () => {
 
       expect(statusCode).toBe(401);
     });
+
+    describe('POST /farms - payload validation', () => {
+      const testCases = [
+        {
+          title: 'should return BadRequestError when name is not sent',
+          requestPayload: {
+            payload: {
+              ...newFarm,
+              name: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'name should not be empty,name must be a string',
+          },
+        },
+        {
+          title: 'should return BadRequestError when coordinates is not sent',
+          requestPayload: {
+            payload: {
+              ...newFarm,
+              coordinates: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'coordinates should not be empty,coordinates must be a latitude,longitude string',
+          },
+        },
+        {
+          title: 'should return BadRequestError when address is not sent',
+          requestPayload: {
+            payload: {
+              ...newFarm,
+              address: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'address should not be empty,address must be a string',
+          },
+        },
+        {
+          title: 'should return BadRequestError when size is not sent',
+          requestPayload: {
+            payload: {
+              ...newFarm,
+              size: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'size should not be empty,size must be a number conforming to the specified constraints',
+          },
+        },
+        {
+          title: 'should return BadRequestError when yield is not sent',
+          requestPayload: {
+            payload: {
+              ...newFarm,
+              yield: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'yield should not be empty,yield must be a number conforming to the specified constraints',
+          },
+        },
+      ];
+
+      test.each(testCases)('$title', async ({ requestPayload, responsePayload }) => {
+        const { statusCode, body } = await agent.post('/api/farms').set({ authorization: authHeader }).send(requestPayload.payload);
+
+        expect(statusCode).toBe(responsePayload.status);
+        expect(body.message).toBe(responsePayload.message);
+      });
+    });
   });
 
   describe('GET /farms', () => {

@@ -66,5 +66,69 @@ describe('UsersController', () => {
         message: 'A user for the email already exists',
       });
     });
+
+    describe('POST /transaction - payload validation', () => {
+      const testCases = [
+        {
+          title: 'should return BadRequestError when email is not sent',
+          requestPayload: {
+            payload: {
+              ...createUserDto,
+              email: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'email should not be empty,email must be an email',
+          },
+        },
+        {
+          title: 'should return BadRequestError when password is not sent',
+          requestPayload: {
+            payload: {
+              ...createUserDto,
+              password: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'password should not be empty,password must be a string',
+          },
+        },
+        {
+          title: 'should return BadRequestError when coordinates is not sent',
+          requestPayload: {
+            payload: {
+              ...createUserDto,
+              coordinates: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'coordinates should not be empty,coordinates must be a latitude,longitude string',
+          },
+        },
+        {
+          title: 'should return BadRequestError when address is not sent',
+          requestPayload: {
+            payload: {
+              ...createUserDto,
+              address: undefined,
+            },
+          },
+          responsePayload: {
+            status: 400,
+            message: 'address should not be empty,address must be a string',
+          },
+        },
+      ];
+
+      test.each(testCases)('$title', async ({ requestPayload, responsePayload }) => {
+        const { statusCode, body } = await agent.post('/api/users').send(requestPayload.payload);
+
+        expect(statusCode).toBe(responsePayload.status);
+        expect(body.message).toBe(responsePayload.message);
+      });
+    });
   });
 });
