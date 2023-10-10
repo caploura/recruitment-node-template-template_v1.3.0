@@ -145,3 +145,7 @@ _Add API that supports following requirements:_
   explain it to the rest of your team)
   - Max 25 pr. request
   - Max 10 requests pr. seconds
+
+  - A: In order to limit the rate of requests in this application, we could either implement it ourselves with a caching solution like Redis or (in this case, since we're using express) we could use a very 
+   famous library called _express-rate-limit which allows us to limit the rate using either memory, redis cache, postgres, or mongo.
+   If we were using NestJS we could use _@nestjs/throttler which comes out of the box with the frameowork.
