@@ -10,7 +10,6 @@ import { IsLatLong, IsNotEmpty, IsNumber, IsString } from 'class-validator';
  *        - name
  *        - coordinates
  *        - address
- *        - userId
  *        - size
  *        - yield
  *      properties:
@@ -23,9 +22,6 @@ import { IsLatLong, IsNotEmpty, IsNumber, IsString } from 'class-validator';
  *        address:
  *          type: string
  *          default: Some street name, 0000 Somewhere
- *        userId:
- *          type: string
- *          default: 28221216-5983-454f-85e2-e1a4669e50ab
  *        size:
  *          type: number
  *          default: 25.8

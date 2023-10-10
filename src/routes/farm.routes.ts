@@ -32,6 +32,41 @@ const farmsController = new FarmsController();
  *     tags:
  *       - Farm
  *     summary: Fetch farms
+ *     parameters:
+ *       - in: header
+ *         name: authorization
+ *         required: true
+ *         schema:
+ *          type : string
+ *       - in: path
+ *         name: limit
+ *         required: false
+ *         schema:
+ *          type : integer
+ *          example: 100
+ *       - in: path
+ *         name: offset
+ *         required: false
+ *         schema:
+ *          type : integer
+ *          example: 0
+ *       - in: path
+ *         name: sortOrder
+ *         required: false
+ *         schema:
+ *          type : string
+ *          example: ASC
+ *       - in: path
+ *         name: sortColumn
+ *         required: false
+ *         schema:
+ *          type : string
+ *          example: name
+ *       - in: path
+ *         name: outliers
+ *         required: false
+ *         schema:
+ *          type : boolean
  *     responses:
  *      200:
  *        description: Success

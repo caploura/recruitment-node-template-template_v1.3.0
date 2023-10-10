@@ -7,18 +7,15 @@ import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
  * @openapi
  * components:
  *  schemas:
- *    FetchClassQueryParams:
- *      type: query
- *      required:
- *        - limit
- *        - offset
- *      properties:
- *        limit:
- *          type: number
- *          default: example@app.com
- *        offset:
- *          type: number
- *          default: password
+ *    parameters:
+ *     - in: query
+ *       name: limit
+ *       schema:
+ *        type: integer
+ *     - in: query
+ *       name: offset
+ *       schema:
+ *        type: integer
  */
 export class FetchFarmQueryParams {
   @IsOptional()
