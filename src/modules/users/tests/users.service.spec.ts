@@ -1,31 +1,20 @@
-import config from "config/config";
 import { faker } from '@faker-js/faker';
 import { UnprocessableEntityError } from "errors/errors";
-import { Express } from "express";
-import { setupServer } from "server/server";
 import { clearDatabase, disconnectAndClearDatabase } from "helpers/utils";
-import http, { Server } from "http";
 import ds from "orm/orm.config";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { User } from "../entities/user.entity";
 import { UsersService } from "../users.service";
 
 describe("UsersService", () => {
-  let app: Express;
-  let server: Server;
-
   let usersService: UsersService;
 
   beforeAll(async () => {
-    app = setupServer();
     await ds.initialize();
-
-    server = http.createServer(app).listen(config.APP_PORT);
   });
 
   afterAll(async () => {
     await disconnectAndClearDatabase(ds);
-    server.close();
   });
 
   beforeEach(async () => {

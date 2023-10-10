@@ -1,7 +1,7 @@
 import config from 'config/config';
 import { Express } from 'express';
 import { setupServer } from 'server/server';
-import { AMOUNT_OF_TEST_FARMS, clearDatabase, dbSeed, disconnectAndClearDatabase } from 'helpers/utils';
+import { clearDatabase, dbSeed, disconnectAndClearDatabase } from 'helpers/utils';
 import http, { Server } from 'http';
 import ds from 'orm/orm.config';
 import { UsersService } from 'modules/users/users.service';
@@ -11,6 +11,7 @@ import { CreateFarmDto } from '../dto/create-farm.dto';
 import { faker } from '@faker-js/faker';
 import { AuthService } from 'modules/auth/auth.service';
 import { DistanceService } from 'modules/distance/distance.service';
+import { mockedDistanceApiResponse } from 'modules/distance/tests/mocks/distance.mock';
 
 describe('FarmsController', () => {
   let app: Express;
@@ -86,22 +87,6 @@ describe('FarmsController', () => {
   });
 
   describe('GET /farms', () => {
-    const mockDistanceValues: any[] = [];
-
-    for (let i = 0; i < AMOUNT_OF_TEST_FARMS; i++) {
-      mockDistanceValues.push({
-        distance: {
-          text: faker.word.noun(),
-          value: i,
-        },
-        duration: {
-          text: faker.word.noun(),
-          value: i,
-        },
-        status: 'OK',
-      });
-    }
-
     beforeAll(async () => {
       await clearDatabase(ds);
 
@@ -112,15 +97,7 @@ describe('FarmsController', () => {
     beforeEach(() => {
       jest.resetAllMocks();
       mockDistanceFunc = jest.spyOn(DistanceService.prototype, 'getDistanceBetweenTwoPointsFromGoogleApi');
-      mockDistanceFunc.mockResolvedValue({
-        destination_addresses: [faker.location.streetAddress()],
-        origin_addresses: [faker.location.streetAddress()],
-        rows: [
-          {
-            elements: mockDistanceValues,
-          },
-        ],
-      });
+      mockDistanceFunc.mockResolvedValue(mockedDistanceApiResponse());
     });
 
     afterAll(() => {
@@ -171,7 +148,7 @@ describe('FarmsController', () => {
       expect(body[0].name < body[1].name).toBe(true);
     });
 
-    it('should successfuly retrieve farms from DB in ASC order - Offset = 100 (returns 50 records)', async () => {
+    it('should successfuly retrieve farms from DB in ASC order - Offset = 100 (returns 50 out of 100 records)', async () => {
       const url = `/api/farms?sortOrder=ASC&offset=100`;
       const { statusCode, body } = await agent.get(url).set({ authorization: authHeader });
 
@@ -209,6 +186,26 @@ describe('FarmsController', () => {
       expect(body.length).toBeLessThan(100); // Taking into account the mock data generated, this should always be true;
 
       expect(body[0].distance > body[1].distance).toBe(true);
+    });
+
+    it('should successfuly retrieve farms from DB ordered by date descending', async () => {
+      const url = `/api/farms?sortOrder=DESC&sortColumn=date`;
+      const { statusCode, body } = await agent.get(url).set({ authorization: authHeader });
+
+      expect(statusCode).toBe(200);
+      expect(body.length).toBe(100);
+
+      expect(new Date(body[0].createdAt) > new Date(body[body.length - 1].createdAt)).toBe(true);
+    });
+
+    it('should successfuly retrieve farms from DB ordered by date asc', async () => {
+      const url = `/api/farms?sortOrder=ASC&sortColumn=date`;
+      const { statusCode, body } = await agent.get(url).set({ authorization: authHeader });
+
+      expect(statusCode).toBe(200);
+      expect(body.length).toBe(100);
+
+      expect(new Date(body[0].createdAt) < new Date(body[body.length - 1].createdAt)).toBe(true);
     });
   });
 });

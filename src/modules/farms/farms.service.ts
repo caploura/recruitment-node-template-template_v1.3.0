@@ -1,27 +1,24 @@
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import dataSource from 'orm/orm.config';
 import { Farm } from './entities/farm.entity';
 import { CreateFarmDto } from './dto/create-farm.dto';
 import { SortColumnEnum, SortOrderEnum } from 'enums/farm.enum';
 import { DefaultOutlierPercentage } from 'constants/outliers.constants';
 import { User } from 'modules/users/entities/user.entity';
-import { UsersService } from 'modules/users/users.service';
 import { DistanceService } from 'modules/distance/distance.service';
 import { DistanceUnitsEnum } from 'enums/distance.enum';
 import { FetchFarmResponseDto } from './dto/fetch-farm.dto';
 
 export type ExtendedFarm = CreateFarmDto & {
-  userId: any
-}
+  owner: string;
+};
 
 export class FarmsService {
   private readonly farmsRepository: Repository<Farm>;
-  private readonly usersService: UsersService;
   private readonly distanceService: DistanceService;
 
   constructor() {
     this.farmsRepository = dataSource.getRepository(Farm);
-    this.usersService = new UsersService();
     this.distanceService = new DistanceService();
   }
 
@@ -29,14 +26,14 @@ export class FarmsService {
     return this.farmsRepository.save(data);
   }
 
-  private async queryFarmsWithOwner(
+  async queryFarmsWithOwner(
     limit: number,
     offset: number,
     sortOrder: SortOrderEnum = SortOrderEnum.DESC,
     sortColumn: SortColumnEnum,
     outliers: boolean,
     averageYield: number,
-  ): Promise<Farm[]> {
+  ): Promise<ExtendedFarm[]> {
     let sortColName: string;
     if (sortColumn === SortColumnEnum.DATE) {
       sortColName = 'farm.createdAt';
@@ -46,7 +43,7 @@ export class FarmsService {
 
     let query = this.farmsRepository
       .createQueryBuilder('farm')
-      .select('farm.name, farm.address, farm.coordinates, farm.size, farm.yield, user.email AS owner, farm.createdAt');
+      .select('farm.name, farm.address, farm.coordinates, farm.size::float, farm.yield::float, user.email AS owner, farm.createdAt');
 
     if (outliers) {
       query = query.where('farm.yield > :minYield AND farm.yield < :maxYield', {
@@ -60,13 +57,13 @@ export class FarmsService {
     return query.execute();
   }
 
-  private async getAverageFarmYield(): Promise<number> {
+  async getAverageFarmYield(): Promise<number> {
     const avg = (await this.farmsRepository.average('yield')) || 0;
     return avg;
   }
 
   public async fetchFarmsByParams(
-    userId: string,
+    user: User,
     limit: number,
     offset: number,
     sortOrder: string,
@@ -74,12 +71,6 @@ export class FarmsService {
     outliers: boolean,
   ): Promise<FetchFarmResponseDto[]> {
     let averageYield: number = 0;
-
-    const user = await this.usersService.findOneBy({ id: userId });
-    
-    if (!user || !userId) {
-      throw new EntityNotFoundError(User, `userId: ${userId}`);
-    }
 
     if (outliers) {
       averageYield = await this.getAverageFarmYield();

@@ -54,6 +54,6 @@ export class FetchFarmResponseDto {
   size: number;
   yield: number;
   owner?: string;
-  createdAt: Date;
+  createdAt?: Date;
   distance: number;
 }

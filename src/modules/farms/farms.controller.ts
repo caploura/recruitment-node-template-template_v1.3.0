@@ -31,11 +31,11 @@ export class FarmsController {
 
   public async fetch(req: ExtendedRequest, res: Response, next: NextFunction) {
     try {
-      const { id: userId } = req.user;
+      const user = req.user;
       const { limit = DefaultPaginationValues.limit, offset = DefaultPaginationValues.offset, sortOrder, sortColumn, outliers = 'false' } = req.query;
 
       const result = await this.farmService.fetchFarmsByParams(
-        userId as string,
+        user,
         limit as number,
         offset as number,
         sortOrder as string,
