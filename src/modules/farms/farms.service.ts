@@ -13,6 +13,10 @@ export type ExtendedFarm = CreateFarmDto & {
   owner: string;
 };
 
+export type ExtendedFarmWithUser = CreateFarmDto & {
+  user: User;
+};
+
 export class FarmsService {
   private readonly farmsRepository: Repository<Farm>;
   private readonly distanceService: DistanceService;
@@ -22,7 +26,7 @@ export class FarmsService {
     this.distanceService = new DistanceService();
   }
 
-  public async createFarm(data: CreateFarmDto): Promise<Farm> {
+  public async createFarm(data: ExtendedFarmWithUser): Promise<Farm> {
     return this.farmsRepository.save(data);
   }
 

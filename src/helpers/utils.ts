@@ -1,11 +1,11 @@
 import { DataSource } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { CreateFarmDto } from 'modules/farms/dto/create-farm.dto';
 import { CreateUserDto } from 'modules/users/dto/create-user.dto';
 import { UsersService } from 'modules/users/users.service';
-import { FarmsService } from 'modules/farms/farms.service';
+import { ExtendedFarmWithUser, FarmsService } from 'modules/farms/farms.service';
 import { AuthService } from 'modules/auth/auth.service';
 import { AccessToken } from 'modules/auth/entities/access-token.entity';
+import { CreateFarmDto } from 'modules/farms/dto/create-farm.dto';
 
 export const disconnectAndClearDatabase = async (ds: DataSource): Promise<void> => {
   await clearDatabase(ds);
@@ -24,20 +24,20 @@ export const dbSeed = async (usersService: UsersService, farmsService: FarmsServ
   const email = faker.internet.exampleEmail();
   const pwd = faker.string.alpha(10);
 
-  const user: CreateUserDto = {
+  const createdUser: CreateUserDto = {
     email,
     password: pwd,
     address: faker.location.streetAddress(),
     coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
   };
 
-  const createdUser = await usersService.createUser(user);
+  const user = await usersService.createUser(createdUser);
 
-  console.log(`Created test user with id ${createdUser.id}`);
+  console.log(`Created test user with id ${user.id}`);
 
-  const farms: CreateFarmDto[] = [];
+  const farms: ExtendedFarmWithUser[] = [];
   for (let i = 0; i < AMOUNT_OF_TEST_FARMS; i++) {
-    const f = {
+    const f: CreateFarmDto = {
       name: faker.word.words(3),
       coordinates: `${faker.location.latitude()},${faker.location.longitude()}`,
       address: faker.location.streetAddress(),
@@ -45,7 +45,12 @@ export const dbSeed = async (usersService: UsersService, farmsService: FarmsServ
       yield: parseFloat(faker.number.float({ min: 20, max: 100 }).toFixed(2)),
     };
 
-    farms.push({ ...f, user: createdUser } as CreateFarmDto);
+    const farm: ExtendedFarmWithUser = {
+      ...f,
+      user,
+    };
+
+    farms.push(farm);
   }
 
   try {
@@ -63,5 +68,5 @@ export const dbSeed = async (usersService: UsersService, farmsService: FarmsServ
 
   console.log(`Finished seeding test db`);
 
-  return { userId: createdUser.id, token: token.token };
+  return { userId: user.id, token: token.token };
 };

@@ -1,9 +1,9 @@
 import { NextFunction, Response } from 'express';
 
-import { CreateFarmDto } from './dto/create-farm.dto';
-import { FarmsService } from './farms.service';
+import { ExtendedFarmWithUser, FarmsService } from './farms.service';
 import { DefaultPaginationValues } from 'constants/pagination.constants';
 import { ExtendedRequest } from 'middlewares/auth.middleware';
+import { User } from 'modules/users/entities/user.entity';
 
 export class FarmsController {
   private readonly farmService: FarmsService;
@@ -14,14 +14,14 @@ export class FarmsController {
 
   public async create(req: ExtendedRequest, res: Response, next: NextFunction) {
     try {
-      const user = req.user;
+      const user: User = req.user;
 
-      const newFarm = {
+      const newFarm: ExtendedFarmWithUser = {
         ...req.body,
         user,
       };
 
-      const { id, name, address, coordinates, size, yield: farmYield } = await this.farmService.createFarm(newFarm as CreateFarmDto);
+      const { id, name, address, coordinates, size, yield: farmYield } = await this.farmService.createFarm(newFarm);
 
       res.status(201).send({ id, name, address, coordinates, userId: user.id, size, farmYield });
     } catch (error) {

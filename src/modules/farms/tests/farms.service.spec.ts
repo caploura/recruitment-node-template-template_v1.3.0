@@ -63,7 +63,7 @@ describe('FarmsService', () => {
     };
 
     it('should create a farm associated with the given user', async () => {
-      const result = await farmsService.createFarm({ ...newFarm, user } as CreateFarmDto);
+      const result = await farmsService.createFarm({ ...newFarm, user });
 
       expect(result).toBeDefined();
       expect(result.name).toStrictEqual(newFarm.name);
