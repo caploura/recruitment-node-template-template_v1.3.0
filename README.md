@@ -149,3 +149,16 @@ _Add API that supports following requirements:_
     - A: In order to limit the rate of requests in this application, we could either implement it ourselves with a caching solution like Redis or (in this case, since we're using express) we could use a very 
     famous library called _express-rate-limit_ which allows us to limit the rate using either memory, redis cache, postgres, or mongo.
     If we were using NestJS we could use _@nestjs/throttler_ which comes out of the box with the frameowork.
+
+### How to use the app
+
+ - To test the application please follow the following steps:
+    - Start Docker on your local machine and execute `docker-compose up -d`
+    - Run the test db migration command `npm run test:migration:run`
+    - Run all tests: `npm run test`
+
+
+
+- To run the application please follow the following steps:
+    - Start Docker on your local machine and execute `npm run migration:run`
+    - Start the application locally with `npm run start:dev`
